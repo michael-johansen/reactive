@@ -3,7 +3,7 @@ import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
 
 import { LOADING, SUCCESS, ERROR } from '../../consts/phaseEnums';
-import { fetchChat, resetChat } from '../../redux/modules/chatDuck';
+import { fetchChat, resetChat, addMessage } from '../../redux/modules/chatDuck';
 
 import Messages from './Messages';
 
@@ -14,9 +14,12 @@ class ReduxChat extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.addMessage = this.addMessage.bind(this);
+    this.updateMessage = this.updateMessage.bind(this);
 
     this.state = {
       name: props.routeParams.name || '',
+      message: ""
     };
   }
 
@@ -43,6 +46,15 @@ class ReduxChat extends Component {
 
     this.props.fetchChat(name);
     this.props.push(`/reduxchat/${name}`);
+  }
+
+  addMessage() {
+    this.props.addMessage(this.state.message);
+    this.setState({ message: ""});
+  }
+
+  updateMessage(ev) {
+    this.setState({ message: ev.target.value});
   }
 
   render() {
@@ -92,6 +104,25 @@ class ReduxChat extends Component {
                     <img src="/assets/doge.jpg" alt="doge" />
                   }
                   <Messages messages={chat.messages} />
+                  <div className="input-group">
+                    <input
+                        type="text"
+                        name="message"
+                        onChange={this.updateMessage}
+                        className="form-control"
+                        placeholder="Add message"
+                        value={this.state.message}
+                    />
+                    <span className="input-group-btn">
+                      <button
+                          className="btn btn-default"
+                          onClick={this.addMessage}
+                      >
+                    Add message!
+                </button>
+              </span>
+
+                  </div>
                 </div>
               </div>
             }
@@ -115,12 +146,14 @@ ReduxChat.propTypes = {
   push: PropTypes.func.isRequired,
   fetchChat: PropTypes.func.isRequired,
   resetChat: PropTypes.func.isRequired,
+  addMessage: PropTypes.func.isRequired,
 };
 
 const actions = {
   push,
   fetchChat,
   resetChat,
+  addMessage,
 };
 
 export default connect(state => ({
