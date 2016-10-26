@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { Link, locationShape } from 'react-router';
 import DevTools from 'mobx-react-devtools';
 import classnames from 'classnames';
+import { connect } from 'react-redux';
 
 const Index = props => (
   <div id="Index">
@@ -14,7 +15,7 @@ const Index = props => (
       </div>
       <ul className="nav navbar-nav">
         <li className={classnames({ active: props.location.pathname.includes('/reduxchat') })}>
-          <Link to="/reduxchat">Redux Chat</Link>
+          <Link to="/reduxchat">Redux Chat ({props.chat.messages.size})</Link>
         </li>
         <li className={classnames({ active: props.location.pathname.includes('/mobxchat') })}>
           <Link to="/mobxchat">Mobx Chat</Link>
@@ -30,6 +31,9 @@ const Index = props => (
 Index.propTypes = {
   children: PropTypes.node.isRequired,
   location: locationShape.isRequired,
+  chat: PropTypes.object.isRequired,
 };
 
-export default Index;
+export default connect(state => ({
+    chat: state.chat,
+}))(Index);
